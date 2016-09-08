@@ -97,39 +97,7 @@
     //convert to cards graph by numbers
     function show_cards($cards) {
         for ($i = 0; $i < 52; $i++) {
-            switch ($cards[$i] % 13 + 1) {
-                case 1:
-                    echo str_pad("A", 2, ' ', STR_PAD_LEFT);
-                    break;
-                case 11:
-                    echo str_pad("J", 2, ' ', STR_PAD_LEFT);
-                    break;
-                case 12:
-                    echo str_pad("Q", 2, ' ', STR_PAD_LEFT);
-                    break;
-                case 13:
-                    echo str_pad("K", 2, ' ', STR_PAD_LEFT);
-                    break;
-                default:
-                    echo str_pad($cards[$i] % 13 + 1, 2, ' ', STR_PAD_LEFT);
-                    break;
-            }
-            switch ((int)($cards[$i] / 13)) {
-                case 0:
-                    echo "♣ ";
-                    break;
-                case 1:
-                    echo "♦ ";
-                    break;
-                case 2:
-                    echo "♥ ";
-                    break;
-                case 3:
-                    echo "♠ ";
-                    break;
-                default:
-                    break;
-            }
+            show_card($cards[$i]);
             if ($i % 13 == 12) {
                 echo "\n";
             }
