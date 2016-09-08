@@ -63,11 +63,4 @@
             }
         }
     }
-
-    //swap card
-    function swap_card(&$cards, $key1, $key2) {
-        $temp = $cards[$key1];
-        $cards[$key1] = $cards[$key2];
-        $cards[$key2] = $temp;
-    }
 ?>
