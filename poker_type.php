@@ -1,23 +1,41 @@
 <?php
     $cards = array();
     $suffled_cards = array();
+    $game_cards_set = array();
     $players = -1;
 
-    shuffle_cards($cards, $suffled_cards);
-
-    echo "Game Start! Please tell me how many players want to play this game: ";
+    echo "Game Start! Please tell me how many players want to play this game[0~10]: ";
     fscanf(STDIN, "%d\n", $players);
-    while (!is_int($players) || $players < 0) {
-        echo "Please tell me a positive integer number. How many players want to play this game: ";
+    while (!is_int($players) || $players < 0 || $players > 10) {
+        echo "Please tell me a positive integer number[0~10]. How many players want to play this game: ";
         fscanf(STDIN, "%d\n", $players);
     }
     if ($players == 0) {
-        
+        echo "No one here. Have a nice day, Bye!\n";
+        exit(0);
     }
 
-    echo $players;
-    
+    shuffle_cards($cards, $suffled_cards);
+    deal($suffled_cards, $players, $game_cards_set);
+
+    function deal(&$suffled_cards, $players, &$game_cards_set){
+        //prepare game_cards_set space for players
+        for ($i = 0; $i < $players; $i++) {
+            $game_cards_set[$i] = array();
+        }
+        //eveyone has 5 cards
+        for ($i = 0; $i < 5; $i++) { 
+            for ($j = 0; $j < $players; $j++) {
+                array_push($game_cards_set[$j], array_pop($suffled_cards));
+            }
+        }
+        print_r($game_cards_set);
+    }
+
     function shuffle_cards(&$cards, &$suffled_cards){
+        //make sure array of cards is empty 
+        $cards = array_diff($cards, $cards);
+
         //init cards
         for ($i = 0; $i < 52; $i++) {
             array_push($cards, $i);
