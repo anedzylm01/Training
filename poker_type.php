@@ -92,7 +92,7 @@
                     $points = 14;
                 }
             }
-            $player_cards_set[6] = $player_cards_set[6] + $points * ((int)($card / 13) + 1);
+            $player_cards_set[6] = $player_cards_set[6] + $points * ((int)($player_cards_set[$i] / 13) + 1);
         }
     }
 
@@ -281,11 +281,17 @@
     }
 
     function start_game_info(&$players){
+        $connect_times = 0;
         echo "Game Start! Please tell me how many players want to play this game[0~10]: ";
         fscanf(STDIN, "%d\n", $players);
-        while (!is_int($players) || $players < 0 || $players > 10) {
-            echo "Please tell me a positive integer number[0~10]. How many players want to play this game: ";
+        while ((!is_int($players) || $players < 0 || $players > 10) && $connect_times < 3) {
+            if ($connect_times == 2) {
+                echo "Warning! Too many illegal words in attempts. See you.\n";
+                exit(0);
+            }
+            echo "Please tell me a positive integer number[0~10]. \nHow many players want to play this game: ";
             fscanf(STDIN, "%d\n", $players);
+            $connect_times++;
         }
         if ($players == 0) {
             echo "No one here. Have a nice day, Bye!\n";
