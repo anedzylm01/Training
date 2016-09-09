@@ -53,7 +53,7 @@
     deal($suffled_cards, $players, $game_cards_set);
     card_type($players, $game_cards_set);
     show_game($players, $game_cards_set);
-    game_rank($players, $game_cards_set);
+    game_rank($game_cards_set);
 
     //according to game_cards_set grades to sort
     function sort_by_grades($a, $b) {
@@ -64,18 +64,19 @@
     }
 
     //rank play in game
-    function game_rank($players, $game_cards_set){
+    function game_rank($game_cards_set){
         uasort($game_cards_set, 'sort_by_grades');
         echo "Game Rank:\n";
         foreach ($game_cards_set as $key => $value) {
-            echo "Player" . str_pad($key + 1, 3, ' ') . "\n";
+            $player_num = $key + 1;
+            echo "Player" . $player_num . "\n";
         }
     }
 
     //show players cards
     function show_game($players, $game_cards_set){
         for ($i = 0; $i < $players; $i++) {
-            echo "Player" . str_pad($i + 1, 3, ' ');
+            echo "Player" . str_pad($i + 1, 2, ' ');
             for ($j = 0; $j < 5; $j++) {
                 show_card($game_cards_set[$i][$j]);
             }
