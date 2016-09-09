@@ -1,45 +1,48 @@
 <?php
     /*poker_type.php
-    玩家牌組資料結構
-        [0] => 第一張牌
-        [1] => 第二張牌
-        [2] => 第三張牌
-        [3] => 第四張牌
-        [4] => 第五張牌
-        [5] => 牌型
-        [6] => 牌組分數
-    牌組分數計算 (牌型 + 點數 * 花色)
-        牌型
-            同花順 Straight Flush : 1700
-            鐵扇 Four of a Kind : 1500
-            葫蘆 Full house : 1300
-            同花 Flush : 1100
-            順子 Straight : 900
-            三條 Three of a kind : 700
-            兩對 Two Pairs : 500
-            一對 One Pair : 300
-            高牌 High card : 100
-        點數
-            A> 14 (同花順和順子中A如果配上2345時當做1點。)
-            K> 13
-            Q> 12
-            J> 11
-            10> 10
-            9> 9
-            8> 8
-            7> 7
-            6> 6
-            5> 5
-            4> 4
-            3> 3
-            2> 2   
-        花色
-            ♠ 4
-            ♥ 3
-            ♦ 2
-            ♣ 1
+    目的:使用者輸入遊戲人數，程式發出洗好的牌給各位玩家，並判斷玩家的牌型與牌組排名
+    說明:
+        玩家牌組資料結構
+            [0] => 第一張牌
+            [1] => 第二張牌
+            [2] => 第三張牌
+            [3] => 第四張牌
+            [4] => 第五張牌
+            [5] => 牌型
+            [6] => 牌組分數
+        牌組分數計算 (牌型 + 點數 * 花色)
+            牌型
+                同花順 Straight Flush : 1700
+                鐵扇 Four of a Kind : 1500
+                葫蘆 Full house : 1300
+                同花 Flush : 1100
+                順子 Straight : 900
+                三條 Three of a kind : 700
+                兩對 Two Pairs : 500
+                一對 One Pair : 300
+                高牌 High card : 100
+            點數
+                A : 14 (同花順和順子中A如果配上2345時當做1點。)
+                K : 13
+                Q : 12
+                J : 11
+                10 : 10
+                9 : 9
+                8 : 8
+                7 : 7
+                6 : 6
+                5 : 5
+                4 : 4
+                3 : 3
+                2 : 2   
+            花色
+                ♠ : 4
+                ♥ : 3
+                ♦ : 2
+                ♣ : 1
 
     */
+
     $cards = array();
     $suffled_cards = array();
     $game_cards_set = array();
@@ -52,6 +55,7 @@
     show_game($players, $game_cards_set);
     game_rank($players, $game_cards_set);
 
+    //according to game_cards_set grades to sort
     function sort_by_grades($a, $b) {
         if ($a[6] == $b[6]) {
             return 0;
@@ -59,6 +63,7 @@
         return ($a[6] > $b[6]) ? -1 : 1;
     }
 
+    //rank play in game
     function game_rank($players, $game_cards_set){
         uasort($game_cards_set, 'sort_by_grades');
         echo "Game Rank:\n";
@@ -67,10 +72,10 @@
         }
     }
 
+    //show players cards
     function show_game($players, $game_cards_set){
         for ($i = 0; $i < $players; $i++) {
-            echo "Player";
-            echo str_pad($i + 1, 3, ' ');
+            echo "Player" . str_pad($i + 1, 3, ' ');
             for ($j = 0; $j < 5; $j++) {
                 show_card($game_cards_set[$i][$j]);
             }
@@ -78,6 +83,7 @@
         }
     }
 
+    //compute grades by suit
     function count_suit(&$player_cards_set){
         for ($i = 0; $i < 5; $i++) {
             $points = $player_cards_set[$i] % 13;
@@ -137,7 +143,7 @@
         }
     }
 
-    // for flush
+    // check flush
     function bool_flush($player_cards_set){
         $is_flush = -1;
         for ($i = 0; $i < 4; $i++) {
@@ -163,10 +169,10 @@
             else
             {
                 $is_straight = 0;
-                $i = 5;
+                break;
             }
         }
-        if ( $is_straight != 0) {
+        if ($is_straight != 0) {
             if (bool_flush($player_cards_set)) {
                 array_push($player_cards_set, "Straight Flush");
                 array_push($player_cards_set, 1700); //Straight Flush
@@ -178,6 +184,7 @@
         }
     }
 
+    //compute what type of cards and compute cards' grades
     function card_type($players, &$game_cards_set){
         for ($i = 0; $i < $players; $i++) { 
             straight($game_cards_set[$i]);
@@ -190,11 +197,13 @@
         }
     }
 
+    //deal cards to every player
     function deal(&$suffled_cards, $players, &$game_cards_set){
         //prepare game_cards_set space for players
         for ($i = 0; $i < $players; $i++) {
             $game_cards_set[$i] = array();
         }
+
         //eveyone has 5 cards
         for ($i = 0; $i < 5; $i++) { 
             for ($j = 0; $j < $players; $j++) {
@@ -202,9 +211,9 @@
                 sort($game_cards_set[$j]);
             }
         }
-        //print_r($game_cards_set);
     }
 
+    //shuffle cards
     function shuffle_cards(&$cards, &$suffled_cards){
         //make sure array of cards is empty 
         $cards = array_diff($cards, $cards);
@@ -214,23 +223,12 @@
             array_push($cards, $i);
         }
 
-        //show original cards set
-        /*
-        echo "Original cards set:\n";
-        show_cards($cards);
-        */
-
         //shuffle cards set
         for ($i = 51; $i >= 0; $i--) {
             $card_rand_key = rand(0, $i);
             $suffled_cards[$i] = $cards[$card_rand_key];
             $cards[$card_rand_key] = $cards[$i];
         }
-        /*
-        echo "\nAfter suffle:\n";
-        show_cards($suffled_cards);
-        echo "\n";
-        */
     }
 
     //convert to card graph by number
@@ -280,6 +278,7 @@
         }
     }
 
+    //When start game, show info to user what to do 
     function start_game_info(&$players){
         $connect_times = 0;
         echo "Game Start! Please tell me how many players want to play this game[0~10]: ";
