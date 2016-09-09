@@ -34,7 +34,7 @@
                 5 : 5
                 4 : 4
                 3 : 3
-                2 : 2   
+                2 : 2
             花色
                 ♠ : 4
                 ♥ : 3
@@ -92,8 +92,7 @@
                 if ($points == 0) {
                     $points = 1;
                 }
-            }
-            else{
+            } else {
                 if ($points == 0) {
                     $points = 14;
                 }
@@ -148,8 +147,7 @@
         $is_flush = -1;
         for ($i = 0; $i < 4; $i++) {
             if ((int)($player_cards_set[$i + 1] / 13) == (int)($player_cards_set[$i] / 13)) {
-            }
-            else{
+            } else {
                 $is_flush = 0;
                 return false;
             }
@@ -165,9 +163,7 @@
         //straight
         for ($i = 0; $i < 4; $i++) { 
             if (($player_cards_set[$i + 1] % 13 - $player_cards_set[$i] % 13) == 1) {
-            }
-            else
-            {
+            } else {
                 $is_straight = 0;
                 break;
             }
@@ -176,8 +172,7 @@
             if (bool_flush($player_cards_set)) {
                 array_push($player_cards_set, "Straight Flush");
                 array_push($player_cards_set, 1700); //Straight Flush
-            }
-            else{
+            } else {
                 array_push($player_cards_set, "Straight");
                 array_push($player_cards_set, 900); //Straight
             }
@@ -298,3 +293,5 @@
         }
     }
 ?>
+
+
