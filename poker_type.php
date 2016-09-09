@@ -17,6 +17,65 @@
 
     shuffle_cards($cards, $suffled_cards);
     deal($suffled_cards, $players, $game_cards_set);
+    card_type($players, $game_cards_set);
+
+
+
+    // for flush
+    function bool_flush($player_cards_set){
+        $is_flush = -1;
+        for ($i = 0; $i < 4; $i++) {
+            if ((int)($player_cards_set[$i + 1] / 13) == (int)($player_cards_set[$i] / 13)) {
+            }
+            else
+            {
+                $is_flush = 0;
+                return false;
+            }
+        }
+        if ($is_flush != 0) {
+            return true; 
+        }
+    }
+
+    //Straight & Straight Flush will be found here
+    function Straight(&$player_cards_set){
+        $is_straight = -1;
+        //straight
+        for ($i = 0; $i < 4; $i++) { 
+            if (($player_cards_set[$i + 1] % 13 - $player_cards_set[$i] % 13) == 1) {
+            }
+            else
+            {
+                $is_straight = 0;
+                break;
+            }
+        }
+        if ( $is_straight != 0) {
+            if (bool_flush($player_cards_set)) {
+                array_push($player_cards_set, 1700); //Straight Flush
+            }
+            else{
+                array_push($player_cards_set, 900);
+            }
+        }
+        else{
+            break;
+        }
+        print_r($player_cards_set);
+    }
+
+
+    function card_type($players, &$game_cards_set){
+        for ($i = 0; $i < $players; $i++) { 
+            Straight($game_cards_set[$i]);
+            if (bool_flush($game_cards_set[$i]) {
+                array_push($player_cards_set, 1100);
+            }
+        }
+        //print_r($game_cards_set);
+    }
+
 
     function deal(&$suffled_cards, $players, &$game_cards_set){
         //prepare game_cards_set space for players
@@ -27,9 +86,10 @@
         for ($i = 0; $i < 5; $i++) { 
             for ($j = 0; $j < $players; $j++) {
                 array_push($game_cards_set[$j], array_pop($suffled_cards));
+                sort($game_cards_set[$j]);
             }
         }
-        print_r($game_cards_set);
+        //print_r($game_cards_set);
     }
 
     function shuffle_cards(&$cards, &$suffled_cards){
