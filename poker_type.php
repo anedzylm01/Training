@@ -10,40 +10,65 @@
     shuffle_cards($cards, $suffled_cards);
     deal($suffled_cards, $players, $game_cards_set);
     card_type($players, $game_cards_set);
+    show_game($players, $game_cards_set);
 
+
+    function show_game($players, $game_cards_set){
+        for ($i = 0; $i < $players; $i++) { 
+            echo "Player";
+            echo str_pad($i + 1, 3, ' ');
+            for ($j = 0; $j < 5; $j++) { 
+                show_card($game_cards_set[$i][$j]);
+            }
+            echo " {$game_cards_set[$i][5]}\n";
+        }
+    }
+
+    function count_suit(&$player_cards_set){
+        for ($i = 0; $i < 5; $i++) { 
+            $player_cards_set[6] = $player_cards_set[6] + $player_cards_set[$i] % 13 * ((int)($card / 13) + 1);
+        }
+    }
 
     //Four of a Kind & Full house & Three of a kind & Two Pairs & One Pairwill & High card will be found here
     function pair_or_more(&$player_cards_set){
-        $test = array(3, 3, 4, 4, 5);
-        foreach ($test as $key => $value) {
-            $test[$key] = $value % 13;
+        $cards_without_suit = array();
+        foreach ($player_cards_set as $key => $value) {
+            $cards_without_suit[$key] = $value % 13;
         }
-        $test_unique = array_unique($test);
-        //print_r($test);
-        //print_r($test_unique);
-        switch (count($test_unique)) {
+        $player_cards_set_unique = array_unique($cards_without_suit);
+        switch (count($player_cards_set_unique)) {
                 case 2:
-
+                    $max_same_cards_num = max(array_count_values($cards_without_suit));
+                    if ($max_same_cards_num == 3) {
+                        array_push($player_cards_set, "Full house");
+                        array_push($player_cards_set, 1300); //Full house
+                    }
+                    if ($max_same_cards_num == 4) {
+                        array_push($player_cards_set, "Four of a Kind");
+                        array_push($player_cards_set, 1500); //Four of a Kind
+                    }
                     break;
                 case 3:
-                    $type = max(array_count_values($test));
-                    echo "string" . $type;
-                    if ($type == 3) {
-                        array_push($test, 700); //Three of a kind
+                    $max_same_cards_num = max(array_count_values($cards_without_suit));
+                    if ($max_same_cards_num == 3) {
+                        array_push($player_cards_set, "Three of a kind");
+                        array_push($player_cards_set, 700); //Three of a kind
                     }
-                    if ($type == 2) {
-                        array_push($test, 500); //Two Pairs
+                    if ($max_same_cards_num == 2) {
+                        array_push($player_cards_set, "Two Pairs");
+                        array_push($player_cards_set, 500); //Two Pairs
                     }
                     break;
                 case 4:
-                    array_push($test, 300); //One Pair
+                    array_push($player_cards_set, "One Pair");
+                    array_push($player_cards_set, 300); //One Pair
                     break;
                 default:
-                    array_push($test, 100); //High card
+                    array_push($player_cards_set, "High card");
+                    array_push($player_cards_set, 100); //High card
                     break;
         }
-        print_r($test);
-
     }
 
     // for flush
@@ -77,25 +102,28 @@
         }
         if ( $is_straight != 0) {
             if (bool_flush($player_cards_set)) {
+                array_push($player_cards_set, "Straight Flush");
                 array_push($player_cards_set, 1700); //Straight Flush
             }
             else{
-                array_push($player_cards_set, 900); //Flush
+                array_push($player_cards_set, "Straight");
+                array_push($player_cards_set, 900); //Straight
             }
         }
-        print_r($player_cards_set);
+        //print_r($player_cards_set);
     }
 
     function card_type($players, &$game_cards_set){
         for ($i = 0; $i < $players; $i++) { 
             straight($game_cards_set[$i]);
             if (bool_flush($game_cards_set[$i])) {
-                array_push($player_cards_set, 1100);
+                array_push($player_cards_set, "Flush");
+                array_push($player_cards_set, 1100);//Flush
             }
             pair_or_more($game_cards_set[$i]);
-
+            count_suit($game_cards_set[$i]);
         }
-        //print_r($game_cards_set);
+        print_r($game_cards_set);
     }
 
     function deal(&$suffled_cards, $players, &$game_cards_set){
