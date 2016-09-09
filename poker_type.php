@@ -264,16 +264,6 @@
             }
     }
 
-    //convert to cards graph by numbers
-    function show_cards($cards) {
-        for ($i = 0; $i < 52; $i++) {
-            show_card($cards[$i]);
-            if ($i % 13 == 12) {
-                echo "\n";
-            }
-        }
-    }
-
     //When start game, show info to user what to do 
     function start_game_info(&$players){
         $connect_times = 0;
