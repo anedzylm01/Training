@@ -90,15 +90,17 @@
             $points = $player_cards_set[$i] % 13;
             //specil case for Straight & Straight Flush
             if ($player_cards_set[5] == "Straight Flush" || $player_cards_set[5] == "Straight") {
-                if ($points == 0 && in_array($player_cards_set, array(1))) {
-                    $points = 1;
+                if ($points == 0 && in_array($player_cards_set[$i + 1] % 13, array(1))) {
+                    $points = 0;
+                } else if ($points == 0){
+                    $points = 13;
                 }
             } else {
                 if ($points == 0) {
-                    $points = 14;
+                    $points = 13;
                 }
             }
-            $player_cards_set[6] = $player_cards_set[6] + $points * ((int)($player_cards_set[$i] / 13) + 1);
+            $player_cards_set[6] = $player_cards_set[6] + ($points + 1) * ((int)($player_cards_set[$i] / 13) + 1);
         }
     }
 
