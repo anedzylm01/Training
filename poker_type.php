@@ -166,7 +166,7 @@
         //straight
         for ($i = 0; $i < 4; $i++) { 
             if (($player_cards_set[$i + 1] % 13 - $player_cards_set[$i] % 13) == 1) {
-            } else if (($player_cards_set[$i] % 13) == 0 && ($player_cards_set[$i + 1 ] % 13) == 9) {
+            } elseif (($player_cards_set[$i] % 13) == 0 && ($player_cards_set[$i + 1 ] % 13) == 9) {
                 //case for 10, J, Q, K, A
             } else {
                 $is_straight = 0;
