@@ -69,7 +69,11 @@
             for ($j = 0; $j < $game_cards_set[$i][5]; $j++) {
                 show_card($game_cards_set[$i][$j]);
             }
-            echo  $game_cards_set[$i][7] . "\n";
+            if ($game_cards_set[$i][7] > 21) {
+                echo  $game_cards_set[$i][6] . "\n";
+            } else {
+                echo  $game_cards_set[$i][7] . "\n";
+            }
         }
     }
 
@@ -95,7 +99,7 @@
     function hit(&$suffled_cards, &$game_cards_set, $players) {
         for ($i = 0; $i < $players; $i++) {
              count_points($game_cards_set[$i]);
-             while ($game_cards_set[$i][7] < 17 && $game_cards_set[$i][6] < 21 && $game_cards_set[$i][5] < 5) {
+             while ((($game_cards_set[$i][7] < 17 && $game_cards_set[$i][6] < 17) || ($game_cards_set[$i][7] >21 && $game_cards_set[$i][6] < 17)) && $game_cards_set[$i][5] < 5) {
                 deal($suffled_cards, $game_cards_set, $i);
                 count_points($game_cards_set[$i]);
             }
