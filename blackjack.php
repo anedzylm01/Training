@@ -11,7 +11,7 @@
             [5] => 總共幾張牌
             [6] => 牌組分數
             [7] => special case for 1
-        牌組分數計算 (牌型 + 點數 * 花色)
+        牌組分數計算 (點數和)
             點數(points)
                 A : 1 or 11
                 K : 10
@@ -39,98 +39,77 @@
     game_ini($suffled_cards, $players, $game_cards_set);
     hit($suffled_cards, $game_cards_set, $players);
     show_game($players, $game_cards_set);
-    game_rank($game_cards_set);
+    find_winner($game_cards_set);
 
-    //according to game_cards_set grades to sort
-    function sort_by_grades($a, $b) {
-        if ($a[6] == $b[6]) {
-            return 0;
-        }
-        return ($a[6] > $b[6]) ? -1 : 1;
-    }
-
-    //rank play in game
-    function game_rank($game_cards_set){
-        uasort($game_cards_set, 'sort_by_grades');
+    //rank player in game
+    function find_winner($game_cards_set) {
         echo "Game Winner :\n";
-        $min = 0;
-        foreach ($game_cards_set as $key => $value) {
-            if ($game_cards_set[$key][6] > 21) {
-            } elseif ($game_cards_set[$key][6] >= $min) {
-                $player_num = $key + 1;
-                echo "Player" . $player_num . "\n";
-                $min = $game_cards_set[$key][6]; 
-            } else {
-                if ($min == 0) {
-                    echo "No winner.\n";
+        $have_winner = 0;
+        for ($i = 21; $i > 17; $i--) {
+            foreach ($game_cards_set as $key => $value) {
+                if ($game_cards_set[$key][6] == $i || $game_cards_set[$key][7] == $i) {
+                    $player_num = $key + 1;
+                    echo "Player" . $player_num . "\n";
+                    $have_winner = 1;
                 }
+            }
+            if ($have_winner == 1) {
                 break;
-            }          
+            }
+        }
+        if ($have_winner == 0) {
+            echo "No winner.\n";
         }
     }
 
     //show players cards
-    function show_game($players, $game_cards_set){
+    function show_game($players, $game_cards_set) {
         for ($i = 0; $i < $players; $i++) {
             echo "Player" . str_pad($i + 1, 2, ' ');
             for ($j = 0; $j < $game_cards_set[$i][5]; $j++) {
                 show_card($game_cards_set[$i][$j]);
             }
-            echo " {$game_cards_set[$i][5]} " . " {$game_cards_set[$i][6]}\n";
+            echo "\n";
         }
     }
 
     //compute points
-    function count_points(&$player_cards_set){
+    function count_points(&$player_cards_set) {
         $player_cards_set[6] = 0;
         $player_cards_set[7] = 0;
         $special_case = 0;
-        for ($i = 0; $i < $player_cards_set[5]; $i++) { 
+        for ($i = 0; $i < $player_cards_set[5]; $i++) {
             $points = ($player_cards_set[$i] % 13);
             if ($points == 10 || $points == 11 || $points == 12) {
                 $points = 9;
             }
-            if ($points == 0 && $special_case == 0) {
-                $special_case = 1;
-                $points = 10;
-                $player_cards_set[7] = $player_cards_set[6];
-                $player_cards_set[7] = $player_cards_set[7] + ($points + 1);
-            }
             $player_cards_set[6] = $player_cards_set[6] + ($points + 1);
-            
-            //only one A can be 11 in a set
-            if ($special_case == 1) {
-                $points = ($player_cards_set[$i] % 13);
-                $player_cards_set[7] = $player_cards_set[7] + ($points + 1);
+            $player_cards_set[7] = $player_cards_set[7] + ($points + 1);
+            if ($points == 0) {
+                $player_cards_set[7] = $player_cards_set[7] + 10;
             }
         }
     }
     
     //compute players need to hit or not 
-    function hit(&$suffled_cards, &$game_cards_set, $players){
-        for ($i = 0; $i < $players; $i++) { 
+    function hit(&$suffled_cards, &$game_cards_set, $players) {
+        for ($i = 0; $i < $players; $i++) {
              count_points($game_cards_set[$i]);
-             while ($game_cards_set[$i][6] < 17 && $game_cards_set[$i][6] < 21 && $game_cards_set[$i][5] < 5) {
-                if ($game_cards_set[$i][7] < 0) {
-                    deal($suffled_cards, $game_cards_set, $i);
-                    count_points($game_cards_set[$i]);
-                } elseif ($game_cards_set[$i][7] < 17 && $game_cards_set[$i][7] < 21 && $game_cards_set[$i][5] < 5) {
-                    deal($suffled_cards, $game_cards_set, $i);
-                    count_points($game_cards_set[$i]);
-                }
+             while ($game_cards_set[$i][7] < 17 && $game_cards_set[$i][6] < 21 && $game_cards_set[$i][5] < 5) {
+                deal($suffled_cards, $game_cards_set, $i);
+                count_points($game_cards_set[$i]);
             }
         }
     }
    
     //deal cards 
-    function deal(&$suffled_cards, &$game_cards_set, $player)
-    {
+    function deal(&$suffled_cards, &$game_cards_set, $player) {
         $game_cards_set[$player][5]++; 
         $game_cards_set[$player][$game_cards_set[$player][5] - 1] = array_pop($suffled_cards);
     }
 
     //initial game setting
-    function game_ini(&$suffled_cards, $players, &$game_cards_set){
+    function game_ini(&$suffled_cards, $players, &$game_cards_set) {
         //prepare game_cards_set space for players
         for ($i = 0; $i < $players; $i++) {
             $game_cards_set[$i] = array();
@@ -147,13 +126,10 @@
                 deal($suffled_cards, $game_cards_set, $j);
             }
         }
-        //$game_cards_set[0][0] = 0;
-        //$game_cards_set[1][0] = 0;
-        //$game_cards_set[2][0] = 0;
     }
 
     //shuffle cards
-    function shuffle_cards(&$cards, &$suffled_cards){
+    function shuffle_cards(&$cards, &$suffled_cards) {
         //make sure array of cards is empty 
         $cards = array_diff($cards, $cards);
         //init cards
@@ -206,7 +182,7 @@
     }
 
     //When start game, show info to user what to do 
-    function start_game_info(&$players){
+    function start_game_info(&$players) {
         $connect_times = 0;
         echo "Game Start! Please tell me how many players want to play this game[0~10]: ";
         fscanf(STDIN, "%d\n", $players);
