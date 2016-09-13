@@ -52,10 +52,20 @@
     //rank play in game
     function game_rank($game_cards_set){
         uasort($game_cards_set, 'sort_by_grades');
-        echo "Game Rank:\n";
+        echo "Game Winner :\n";
+        $min = 0;
         foreach ($game_cards_set as $key => $value) {
-            $player_num = $key + 1;
-            echo "Player" . $player_num . "\n";
+            if ($game_cards_set[$key][6] > 21) {
+            } elseif ($game_cards_set[$key][6] >= $min) {
+                $player_num = $key + 1;
+                echo "Player" . $player_num . "\n";
+                $min = $game_cards_set[$key][6]; 
+            } else {
+                if ($min == 0) {
+                    echo "No winner.\n";
+                }
+                break;
+            }          
         }
     }
 
@@ -80,18 +90,16 @@
             if ($points == 10 || $points == 11 || $points == 12) {
                 $points = 9;
             }
-            if ($points == 0 && $player_cards_set[7] == -1) {
+            if ($points == 0 && $special_case == 0) {
                 $special_case = 1;
+                $points = 10;
                 $player_cards_set[7] = $player_cards_set[6];
+                $player_cards_set[7] = $player_cards_set[7] + ($points + 1);
             }
             $player_cards_set[6] = $player_cards_set[6] + ($points + 1);
             
             //only one A can be 11 in a set
             if ($special_case == 1) {
-                $points = 10;
-                $player_cards_set[7] = $player_cards_set[7] + ($points + 1);
-                $special_case = 2;
-            } else {
                 $points = ($player_cards_set[$i] % 13);
                 $player_cards_set[7] = $player_cards_set[7] + ($points + 1);
             }
@@ -100,29 +108,15 @@
     
     //compute players need to hit or not 
     function hit(&$suffled_cards, &$game_cards_set, $players){
-        $times_stop = 0 ;
         for ($i = 0; $i < $players; $i++) { 
              count_points($game_cards_set[$i]);
              while ($game_cards_set[$i][6] < 17 && $game_cards_set[$i][6] < 21 && $game_cards_set[$i][5] < 5) {
                 if ($game_cards_set[$i][7] < 0) {
                     deal($suffled_cards, $game_cards_set, $i);
                     count_points($game_cards_set[$i]);
-                    $times_stop++;
-                    if ($times_stop > 20) {
-                         echo "loop error";
-                         exit(0);
-                    }
                 } elseif ($game_cards_set[$i][7] < 17 && $game_cards_set[$i][7] < 21 && $game_cards_set[$i][5] < 5) {
                     deal($suffled_cards, $game_cards_set, $i);
                     count_points($game_cards_set[$i]);
-                    $times_stop++;
-                    if ($times_stop > 20) {
-                         echo "loop error";
-                         exit(0);
-                    }
-                } else {
-                    echo "error";
-                    exit(0);
                 }
             }
         }
@@ -153,9 +147,9 @@
                 deal($suffled_cards, $game_cards_set, $j);
             }
         }
-        $game_cards_set[0][0] = 0;
-        $game_cards_set[1][0] = 0;
-        $game_cards_set[2][0] = 0;
+        //$game_cards_set[0][0] = 0;
+        //$game_cards_set[1][0] = 0;
+        //$game_cards_set[2][0] = 0;
     }
 
     //shuffle cards
