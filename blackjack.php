@@ -69,6 +69,7 @@
             for ($j = 0; $j < $game_cards_set[$i][5]; $j++) {
                 show_card($game_cards_set[$i][$j]);
             }
+            echo  "Total :";
             if ($game_cards_set[$i][7] > 21) {
                 echo  $game_cards_set[$i][6] . "\n";
             } else {
@@ -94,7 +95,7 @@
             }
         }
     }
-    
+
     //compute players need to hit or not 
     function hit(&$suffled_cards, &$game_cards_set, $players) {
         for ($i = 0; $i < $players; $i++) {
