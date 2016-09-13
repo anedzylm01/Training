@@ -69,7 +69,7 @@
             for ($j = 0; $j < $game_cards_set[$i][5]; $j++) {
                 show_card($game_cards_set[$i][$j]);
             }
-            echo "\n";
+            echo  $game_cards_set[$i][7] . "\n";
         }
     }
 
@@ -114,7 +114,7 @@
         for ($i = 0; $i < $players; $i++) {
             $game_cards_set[$i] = array();
             for ($j = 0; $j < 8; $j++) {
-                array_push($game_cards_set[$i][$j], -1);
+                array_push($game_cards_set[$i], -1);
             }
             $game_cards_set[$i][5] = 0;
             $game_cards_set[$i][6] = (int)0;
